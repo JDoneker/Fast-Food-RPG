@@ -1,12 +1,15 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage; 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.awt.event.*; 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 
 
 public class Game  extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener{
@@ -19,6 +22,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	private int characterIndex;
 	private static final int WIDTH =800;
 	private static final int HEIGHT=600;
+	private File saveFile;
 
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -26,6 +30,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		saveFile = new File("savefile.txt");
 		key =-1; 
 		xmouse=0;
 		ymouse=0;
@@ -39,6 +44,44 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		for(Character c: characterList){
 			System.out.println(c);
 		}
+	}
+	public void createFile(){
+		try {
+			if(saveFile.createNewFile()){
+				System.out.println("cool");
+			}else{
+				System.out.println("already exist");
+			}
+		} catch (Exception e) {
+			
+		}
+		
+	}
+	public void writeToFile(){
+		try {
+			FileWriter myFileWriter = new FileWriter(saveFile);
+			if(enemyList.isEmpty()){
+				myFileWriter.write("You win ;)");
+			}else{
+				myFileWriter.write("This many enemies left: "+Integer.toString(enemyList.size()));
+			}
+			myFileWriter.close();
+			System.out.println("yay file :)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public void readFile(){
+		try {
+			Scanner sc = new Scanner(saveFile);
+			while(sc.hasNext()){
+				System.out.println(sc.next());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	private Queue<Enemy> setEnemyList() {
 		Queue<Enemy> temp = new LinkedList<>();
@@ -184,6 +227,9 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		}
 		if(key==32 && screen == "selection"){
 			screen = "start";
+		}
+		if(key == 32 && screen == "gameplay"){
+			System.out.println("end?");
 		}
 		if(key == 10 && screen == "selection"){
 			characterList.get(characterIndex).moveCenter(WIDTH,HEIGHT);
