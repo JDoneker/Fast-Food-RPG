@@ -85,10 +85,8 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	}
 	private Queue<Enemy> setEnemyList() {
 		Queue<Enemy> temp = new LinkedList<>();
-		temp.add(new SaladMonster(100,100));
-		temp.add(new SaladMonster(200,100));
-		temp.add(new SaladMonster(300,100));
-		temp.add(new SaladMonster(400,100));
+		temp.add(new SaladMonster((int)(100*Math.floor(15*Math.random())),(int)(100*Math.floor(15*Math.random()))));
+		temp.add(new SaladMonster((int)(100*Math.floor(15*Math.random())),(int)(100*Math.floor(15*Math.random()))));
 		return temp;
 	}
 	private ArrayList<Character> setCharacterList() {
@@ -162,6 +160,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			
 			if(p instanceof PlayerProjectile&&enemyList.peek()!=null&&p.collidesWith(enemyList.peek(),xoffset,yoffset)){
 				enemyList.remove();
+				enemyList.add(new SaladMonster((int)(100*Math.floor(15*Math.random())),(int)(100*Math.floor(15*Math.random()))));
 				iterator.remove();
 				
 			}
@@ -174,7 +173,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		}
 		if(enemyList.peek()!=null){
 			enemyList.peek().drawCharOffset(g2d,xoffset,yoffset);
-			if(Math.random()<0.4){
+			if(Math.random()<0.04){
 				projectileList.add(new EnemyProjectile(enemyList.peek().getX()+xoffset, enemyList.peek().getY()+yoffset,c.getX()+c.getWidth()/2, c.getY()+c.getHeight()/2,xoffset,yoffset));
 
 			}
