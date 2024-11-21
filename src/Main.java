@@ -9,7 +9,7 @@ public class Main extends JFrame{
 		super("Fast Food RPG");
 		Game play = new Game();
 		((Component) play).setFocusable(true); 
-		setBackground(Color.WHITE);
+		setBackground(Color.GRAY);
 		setResizable(false);
 		add(play);
 		setVisible(true);
