@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.awt.event.*; 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,6 +24,9 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	private static final int WIDTH =800;
 	private static final int HEIGHT=600;
 	private File saveFile;
+	private double startTime;
+	private double curTime;
+	private double highScore;
 
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -44,6 +48,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		for(Character c: characterList){
 			System.out.println(c);
 		}
+		
 	}
 	public void createFile(){
 		try {
@@ -56,14 +61,15 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			
 		}
 		
-	}
+	}	
 	public void writeToFile(){
 		try {
 			FileWriter myFileWriter = new FileWriter(saveFile);
-			if(enemyList.isEmpty()){
-				myFileWriter.write("You win ;)");
+			if(curTime>highScore){
+				myFileWriter.write(Double.toString(curTime));
 			}else{
-				myFileWriter.write("This many enemies left: "+Integer.toString(enemyList.size()));
+				myFileWriter.write(Double.toString(highScore));
+				System.out.println("not highscore");
 			}
 			myFileWriter.close();
 			System.out.println("yay file :)");
@@ -76,8 +82,9 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		try {
 			Scanner sc = new Scanner(saveFile);
 			while(sc.hasNext()){
-				System.out.println(sc.next());
+				highScore = Double.parseDouble(sc.next());
 			}
+			sc.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -143,14 +150,31 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			case "gameplay":
 				drawGameplayScreen(g2d);
 				break;
+			case "lose":
+				drawLoseScreen(g2d);
+				break;
 			default:
 				break;
+		}
+	}
+	private void drawLoseScreen(Graphics g2d) {
+		g2d.drawString("Score "+ new DecimalFormat("#0.00").format(curTime),300,300);
+		g2d.drawString("High Score "+ new DecimalFormat("#0.00").format(highScore),300,332);
+		if(curTime > highScore){
+			g2d.drawString("you got a new high score !!!",300,364);
+		}else{
+			g2d.drawString("no new high score :(",400,364);
 		}
 	}
 	private void drawGameplayScreen(Graphics g2d) {
 		g2d.drawImage(new ImageIcon("DefaultBackground.png").getImage(), xoffset, yoffset, 1500,1500,null);
 		Character c = characterList.get(characterIndex);
 		g2d.drawString(Integer.toString(c.getHealth()),0,32);
+		curTime = (System.currentTimeMillis()-startTime)/1000;
+		g2d.drawString("Timer: "+ new DecimalFormat("#0.00").format(curTime),0,64);
+		if(c.getHealth()<=0){
+			screen = "lose";
+		}
 		c.drawChar(g2d);
 		c.drawWeapon(g2d);
 		Iterator<Projectile> iterator = projectileList.iterator();
@@ -233,6 +257,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		if(key == 10 && screen == "selection"){
 			characterList.get(characterIndex).moveCenter(WIDTH,HEIGHT);
 			screen = "gameplay";
+			startTime = System.currentTimeMillis();
 		}
 		/* 
 		if(key == 37){ //Right
