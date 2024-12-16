@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class McDonalds extends Character{
+public class McDonalds extends Player{
     public McDonalds(){
         super();
     }

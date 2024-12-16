@@ -16,8 +16,8 @@ public class Weapon {
         dy = 0;
         pic = p;
     }
-    public void drawChar(Graphics g2d, int x2, int y2){
-        g2d.drawImage(pic.getImage(),x2+50,y2+50,width,height,null);
+    public void drawChar(Graphics g2d, int x2, int y2, double scaleFactor){
+        g2d.drawImage(pic.getImage(),x2+(int)(scaleFactor*50),y2+(int)(scaleFactor*50),(int)(scaleFactor*width),(int)(scaleFactor*height),null);
     }
    
 }

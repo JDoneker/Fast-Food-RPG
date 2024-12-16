@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class Dominos extends Character{
+public class Dominos extends Player{
     public Dominos() {
         super();
     }

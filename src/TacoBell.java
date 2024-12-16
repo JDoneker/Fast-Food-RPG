@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class TacoBell extends Character{
+public class TacoBell extends Player{
     public TacoBell() {
         super();
     }

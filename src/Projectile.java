@@ -1,11 +1,11 @@
 import java.awt.Color;
 import java.awt.Graphics;
-
 public class Projectile {
-    double x,y,theta,dx,dy;
+    double x,y,dx,dy;
+    int[] projectileCoord;
     int width,height;
     private Color c;
-    public Projectile(int x1,int y1,int w, int h, double s, Color c1, int x2,int y2, int xoffset, int yoffset ){
+    public Projectile(int x1,int y1,int x2,int y2,int w, int h, double s, Color c1){        
         double speed = s;
         x = x1;
         y = y1;
@@ -14,7 +14,7 @@ public class Projectile {
         c = c1;
         double diffx = x2-x1;
         double diffy = y2-y1;
-        theta = Math.atan(diffy/diffx);
+        double theta = Math.atan(diffy/diffx);
         if(x2>x1){
             dx = speed * Math.cos(theta);
             dy = speed * Math.sin(theta);
@@ -23,32 +23,39 @@ public class Projectile {
             dx = -speed * Math.cos(theta);
             dy = -speed * Math.sin(theta);
         }
-        x-=xoffset;
-        y-=yoffset;
+        if(dx == 0||dy==0){
+            dx = Math.random();
+            dy = Math.random();
+        }
+        projectileCoord = new int[] {-1,-1};
     }
-    public void drawProjectile(Graphics g2d, int xoffset, int yoffset){
-        g2d.setColor(c);
-        g2d.fillRect((int)x+xoffset,(int)y+yoffset,width,height);
+    public boolean collidesWith(int[] coord) {
+        return coord[0]==projectileCoord[0] && coord[1] == projectileCoord[1];
+    }
+    public int getX() {
+        return projectileCoord[0];
+    }
+    public int getY() {
+        return projectileCoord[1];
+    }
+    public void move() {
         x+=dx;
         y+=dy;
     }
-    public boolean collidesWith(Character character, int xoffset, int yoffset) {
-        int cx;
-        int cy;
-        if(character instanceof Enemy){
-            cx = character.getX() + xoffset;
-            cy = character.getY() + yoffset;
-        }else{
-            cx = character.getX();
-            cy = character.getY();
-        }
-        double px = x + xoffset;
-        double py = y + yoffset;
-        int cw = character.getWidth();
-        int ch = character.getHeight();
-        boolean temp = (px< cx+cw && px+width>cx &&py<cy+ch&&py+height>cy);
-        return temp;
+    public void draw(Graphics g2d) {
+        g2d.setColor(c);
+        g2d.fillRect((int)(x-width/2), (int)(y-width/2),width,height);
     }
+    public void updateCoord(int[] playerCoord) {
+        int tempx = (int)x +25;
+        int tempy = (int)y +25;
+        int indexx = Math.floorDiv(tempx, 50)-8;
+        int indexy = Math.floorDiv(tempy, 50)-6;
+        projectileCoord = new int[]{playerCoord[0]+indexx,playerCoord[1]+indexy};
+    }
+    public void setX(int xmove) {x+=xmove;}
+    public void setY(int ymove) {y+=ymove;}
+    public int[] getCoord() {return projectileCoord;}
 
 
 }

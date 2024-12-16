@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class Whataburger extends Character{
+public class Whataburger extends Player{
     public Whataburger(){
         super();
     }
