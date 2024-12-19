@@ -1,7 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javax.swing.ImageIcon;
 
 public class Level {
     private static char[] DIRECTIONS = {'u','d','r','l'};
@@ -13,8 +16,31 @@ public class Level {
         growMaze(grid);
         addDoors(grid,doorRate);
         removeDeadEnds(grid);
+        randomizeWalls(grid);
         print2DArray(grid);
         numEnemy = numEnemy1;
+    }
+    private void randomizeWalls(int[][] grid) {
+        for(var i = 0; i < grid.length; i++){
+            for(var j = 0; j<grid[0].length; j++){
+                if(getDir(grid,j,i,'u',0)[2]==0){
+                    int ranNum = (int)Math.floor(3*Math.random()+1);
+                    switch (ranNum) {
+                        case 1:
+                            setDir(grid, j, i, 'u', 0, 4);
+                            break;
+                        case 2:
+                            setDir(grid, j, i, 'u', 0, 5);
+                            break;
+                        case 3:
+                            setDir(grid, j, i, 'u', 0, 6);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
     public int[][] getGrid(){
         return grid;
@@ -213,20 +239,24 @@ public class Level {
             for(int j = playerCoord[0]-8;j<=playerCoord[0]+8;j++){
                 int xoffset = j-playerCoord[0];
                 int yoffset = i-playerCoord[1];
-                //int[] cell = getRelative(grid,playerCoord[0],playerCoord[1],xoffset,yoffset);
                 int[] cell = getDir(grid, j,i, 'u', 0);
-                if(cell[2]==2||cell[2]==3){
-                    g2d.setColor(Color.WHITE);
-                }else if(cell[2]==-1){
-                    g2d.setColor(Color.BLACK);
-                }else if(cell[2]==1){
-                    g2d.setColor(Color.BLUE);
-                }else{
-                    g2d.setColor(Color.DARK_GRAY);
-                }
                 int screenX = 50*((xoffset)+8)-25;
                 int screenY = 50*((yoffset)+6)-25;
-                g2d.fillRect(screenX,screenY,50,50);
+                if(cell[2]==2||cell[2]==3||cell[2]==1){
+                    g2d.drawImage(new ImageIcon("FloorTile.png").getImage(), screenX, screenY,50,50, null);
+                }else if(cell[2]==-1){
+                    g2d.setColor(Color.BLACK);
+                    g2d.fillRect(screenX,screenY,50,50);
+                }else if(cell[2]==4){
+                    g2d.drawImage(new ImageIcon("WallTile1.png").getImage(), screenX, screenY,50,50, null);
+                }else if(cell[2]==5){
+                    g2d.drawImage(new ImageIcon("WallTile2.png").getImage(), screenX, screenY,50,50, null);
+                }else if(cell[2]==6){
+                    g2d.drawImage(new ImageIcon("WallTile3.png").getImage(), screenX, screenY,50,50, null);
+                }else{
+                    System.out.println(cell[2]);
+                    g2d.setColor(Color.DARK_GRAY);
+                }
             }
         }
     }

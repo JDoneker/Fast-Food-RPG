@@ -53,7 +53,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	}
 	private Queue<Level> setLevelQueue() {
 		Queue<Level> temp = new LinkedList<>();
-		temp.add(new Level(11,11,10,3,5,0.2,10));
+		temp.add(new Level(11,11,1,3,5,1.0,10));
 		temp.add(new Level(65,65,10,11,25,0.2,100));
 		return temp;
 	}
@@ -101,7 +101,23 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		ArrayList<Enemy> temp = new ArrayList<>();
 		for(int i = 0; i < numEnemy; i++){
 			int[] monStart = levelQueue.peek().getValidPosition(1);
-			temp.add(new SaladMonster(monStart[0], monStart[1]));
+			int ranNum = (int)Math.floor(5*Math.random());
+			switch (ranNum) {
+				case 1:
+					temp.add(new SaladMonster(monStart[0], monStart[1]));
+					break;
+				case 2:
+					temp.add(new CarrotMonster(monStart[0], monStart[1]));
+					break;
+				case 3:
+					temp.add(new BroccoliMonster(monStart[0], monStart[1]));
+					break;
+				case 4:
+					temp.add(new TomatoMonster(monStart[0], monStart[1]));
+					break;
+				default:
+					break;
+			}
 		}
 		return temp;
 	}
@@ -196,15 +212,21 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			if(p instanceof EnemyProjectile&&p.collidesWith(playerCoord)){
 				iterator.remove();
 				if(Math.random()>playerList.get(playerIndex).getResistance()/200.0){
-					c.setHealth(c.getHealth()-1);
+					//c.setHealth(c.getHealth()-1);
 				}
 			}
-			if(p instanceof PlayerProjectile){
-				Iterator<Enemy> iterator2 = enemyList.iterator();
-				while(iterator2.hasNext()){
-					Enemy e = iterator2.next();
+		}
+		Iterator<Enemy> iterator2 = enemyList.iterator();
+		while(iterator2.hasNext()){
+			Enemy e = iterator2.next();
+			int[] enemeyPos = levelQueue.peek().indexToScreen(e.getX(),e.getY(),playerCoord);
+			e.drawCharAbsolute(g2d,enemeyPos[0],enemeyPos[1]);
+			if(Math.random()<0.04 && enemeyPos[0]>0 && enemeyPos[0]<WIDTH&& enemeyPos[1]>0&&enemeyPos[1]<HEIGHT){
+				projectileList.add(new EnemyProjectile(enemeyPos[0]+25,enemeyPos[1]+25,WIDTH/2,HEIGHT/2,5,5,1.2,Color.GREEN));
+			}
+			for(Projectile p: projectileList){
+				if(p instanceof PlayerProjectile){
 					if(p.collidesWith(new int[]{e.getX(),e.getY()})){
-						iterator.remove();
 						iterator2.remove();
 					}
 				}
