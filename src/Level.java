@@ -264,7 +264,7 @@ public class Level {
         ArrayList<Character> temp = new ArrayList<>();
         for (char dir : DIRECTIONS) {
             int[] dirCell = getDir(grid, x, y, dir,  1);
-            if(isInBounds(grid, dirCell[0], dirCell[1])&&dirCell[2]!=0){
+            if(isInBounds(grid, dirCell[0], dirCell[1])&&dirCell[2]!=4&&dirCell[2]!=5&&dirCell[2]!=6){
                 temp.add(dir);
             }   
         }

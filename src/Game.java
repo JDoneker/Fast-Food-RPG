@@ -46,14 +46,15 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		enemyList = setEnemyList(levelQueue.peek().getNumEnemy());
 		playerCoord = levelQueue.peek().getValidPosition(2);
 		projectileList = new ArrayList<>();
-		for(Player c: playerList){
-			System.out.println(c);
-		}
 		movementCooldown = 0;
 	}
 	private Queue<Level> setLevelQueue() {
 		Queue<Level> temp = new LinkedList<>();
 		temp.add(new Level(11,11,1,3,5,1.0,10));
+		temp.add(new Level(21,21,3,3,7,0.8,20));
+		temp.add(new Level(31,31,5,5,9,0.5,30));
+		temp.add(new Level(41,41,7,5,11,0.4,40));
+		temp.add(new Level(51,51,7,9,15,0.35,50));
 		temp.add(new Level(65,65,10,11,25,0.2,100));
 		return temp;
 	}
@@ -101,7 +102,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		ArrayList<Enemy> temp = new ArrayList<>();
 		for(int i = 0; i < numEnemy; i++){
 			int[] monStart = levelQueue.peek().getValidPosition(1);
-			int ranNum = (int)Math.floor(5*Math.random());
+			int ranNum = (int)Math.floor(4*Math.random()+1);
 			switch (ranNum) {
 				case 1:
 					temp.add(new SaladMonster(monStart[0], monStart[1]));
@@ -179,6 +180,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		}else{
 			g2d.drawString("no new high score :(",400,364);
 		}
+		g2d.drawString("Press R to Restart", 300, 396);
 	}
 	private void drawGameplayScreen(Graphics g2d) {
 		if(enemyList.size()==0){
@@ -206,13 +208,14 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			p.updateCoord(playerCoord);
 			p.draw(g2d);
 			p.move();
-			if(levelQueue.peek().getValueAt(p.getCoord())==0){
+			int currentVal = levelQueue.peek().getValueAt(p.getCoord());
+			if(currentVal==4||currentVal==5||currentVal==6){
 				iterator.remove();
 			}
 			if(p instanceof EnemyProjectile&&p.collidesWith(playerCoord)){
 				iterator.remove();
 				if(Math.random()>playerList.get(playerIndex).getResistance()/200.0){
-					//c.setHealth(c.getHealth()-1);
+					c.setHealth(c.getHealth()-1);
 				}
 			}
 		}
@@ -315,6 +318,13 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		if(key==32 && screen == "selection"){
 			typingStringIndex = 0;
 			screen = "start";
+		}
+		if(key == 82 && screen == "lose"){
+			screen = "start";
+			levelQueue = setLevelQueue();
+			playerList = setPlayerList();
+			enemyList = setEnemyList(levelQueue.peek().getNumEnemy());
+			playerCoord = levelQueue.peek().getValidPosition(2);
 		}
 		if(screen =="gameplay"){
 			if(key == 87){
